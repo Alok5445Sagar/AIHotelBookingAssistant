@@ -1,0 +1,160 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Hotel Booking Action Group",
+    "version": "1.0.0",
+    "description": "Operations the hotel booking assistant uses to check availability, book rooms, and let administrators manage daily inventory."
+  },
+  "paths": {
+    "/checkAvailability": {
+      "get": {
+        "operationId": "checkAvailability",
+        "summary": "Check room availability for a date",
+        "description": "Returns how many Sea View and Garden View rooms are available on a given date. Call this before confirming any booking.",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "description": "The date to check, in YYYY-MM-DD format.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "roomType",
+            "in": "query",
+            "required": false,
+            "description": "Optional room type to filter on: 'Sea View' or 'Garden View'.",
+            "schema": { "type": "string", "enum": ["Sea View", "Garden View"] }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Availability result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "date": { "type": "string" },
+                    "seaView": { "type": "integer" },
+                    "gardenView": { "type": "integer" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bookRoom": {
+      "post": {
+        "operationId": "bookRoom",
+        "summary": "Book a room for a guest",
+        "description": "Atomically reserves one room of the given type for the check-in date and creates a booking record. Fails safely if no room is available. Only call this once you have collected the check-in date, room type, and guest name.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["checkInDate", "roomType", "guestName"],
+                "properties": {
+                  "checkInDate": {
+                    "type": "string",
+                    "description": "Check-in date in YYYY-MM-DD format."
+                  },
+                  "roomType": {
+                    "type": "string",
+                    "enum": ["Sea View", "Garden View"],
+                    "description": "The room type to book."
+                  },
+                  "guestName": {
+                    "type": "string",
+                    "description": "Full name of the guest."
+                  },
+                  "guestEmail": {
+                    "type": "string",
+                    "description": "Guest email address (optional)."
+                  },
+                  "nights": {
+                    "type": "integer",
+                    "description": "Number of nights (optional, defaults to 1)."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Booking result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "booked": { "type": "boolean" },
+                    "bookingId": { "type": "string" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/updateInventory": {
+      "post": {
+        "operationId": "updateInventory",
+        "summary": "Administrator: set available room count",
+        "description": "Sets the absolute number of available rooms of a given type on a given date. Intended for hotel administrators managing daily inventory.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["date", "roomType", "count"],
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "description": "Date in YYYY-MM-DD format."
+                  },
+                  "roomType": {
+                    "type": "string",
+                    "enum": ["Sea View", "Garden View"],
+                    "description": "The room type to update."
+                  },
+                  "count": {
+                    "type": "integer",
+                    "description": "The new available room count (must be >= 0)."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

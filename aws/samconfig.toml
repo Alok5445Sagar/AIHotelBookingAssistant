@@ -1,0 +1,14 @@
+version = 0.1
+
+[default.global.parameters]
+stack_name = "hotel-booking-assistant"
+
+[default.build.parameters]
+cached = true
+parallel = true
+
+[default.deploy.parameters]
+stack_name = "hotel-booking-assistant"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true

@@ -1,0 +1,23 @@
+# Build output and caches
+.aws-sam/
+__pycache__/
+*.pyc
+
+# Virtual environments and local env files
+.venv/
+venv/
+.env
+
+# Runtime data and local outputs
+local/hotel.db
+out.json
+
+# AWS credentials / CLI config (only inside an .aws folder)
+.aws/
+**/.aws/**
+
+# Workspace-only material, not published
+.agents/
+.kiro/
+docs/SOLUTION_DOCUMENT.md
+docs/DEPLOY_AND_TEST.md

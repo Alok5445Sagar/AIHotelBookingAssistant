@@ -1,0 +1,2 @@
+# The Lambda uses only boto3, which is provided by the Python 3.12 runtime.
+# No third-party dependencies required.
